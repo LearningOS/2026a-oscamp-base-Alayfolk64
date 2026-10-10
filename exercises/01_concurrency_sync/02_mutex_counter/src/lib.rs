@@ -55,7 +55,7 @@ pub fn concurrent_collect(n_threads: usize) -> Vec<usize> {
     let mut handles = Vec::with_capacity(n_threads);
     for i in 0..n_threads {
         let shared_result = Arc::clone(&result);
-        let handle = thread::spawn(move|| {
+        let handle = thread::spawn(move || {
             let mut guard = shared_result.lock().unwrap();
             guard.push(i);
         });
