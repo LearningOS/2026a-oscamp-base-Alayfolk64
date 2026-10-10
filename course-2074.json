@@ -2,8 +2,8 @@
   "schema": 1,
   "courseId": 2074,
   "repository": "LearningOS/2026a-oscamp-base-Alayfolk64",
-  "commit": "93dd8042a4ee90986b0e431e8f99b88dceb84c25",
-  "score": 7,
+  "commit": "7480b0e243e302aa0770c09e207bb6582bb7a3c4",
+  "score": 11,
   "totalScore": 100,
   "exercises": [
     {
@@ -23,9 +23,9 @@
     {
       "name": "channel",
       "max": 4,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 4,
+      "status": "pass",
+      "exitCode": 0
     },
     {
       "name": "process_pipe",
@@ -176,9 +176,9 @@
     }
   ],
   "student": "Alayfolk64",
-  "runId": "37967493304",
+  "runId": "38032374481",
   "runAttempt": "1",
   "upload": {
-    "status": "accepted"
+    "status": "pending"
   }
 }
