@@ -2,8 +2,8 @@
   "schema": 1,
   "courseId": 2074,
   "repository": "LearningOS/2026a-oscamp-base-Alayfolk64",
-  "commit": "1773a03a6a186827976b2521caea0ae0acfd2435",
-  "score": 15,
+  "commit": "a241411e5779c654c35a71ec26abe3c9fd3dff1c",
+  "score": 24,
   "totalScore": 100,
   "exercises": [
     {
@@ -37,16 +37,16 @@
     {
       "name": "mem_primitives",
       "max": 4,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 4,
+      "status": "pass",
+      "exitCode": 0
     },
     {
       "name": "bump_allocator",
       "max": 5,
-      "score": 0,
-      "status": "fail",
-      "exitCode": 101
+      "score": 5,
+      "status": "pass",
+      "exitCode": 0
     },
     {
       "name": "free_list_allocator",
@@ -176,9 +176,9 @@
     }
   ],
   "student": "Alayfolk64",
-  "runId": "38039709662",
+  "runId": "38122620082",
   "runAttempt": "1",
   "upload": {
-    "status": "accepted"
+    "status": "pending"
   }
 }
