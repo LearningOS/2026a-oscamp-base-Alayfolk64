@@ -121,10 +121,19 @@ pub unsafe fn syscall3(id: usize, arg0: usize, arg1: usize, arg2: usize) -> isiz
     //   - inlateout("rax") id => ret
     //   - in("rdi") arg0, in("rsi") arg1, in("rdx") arg2
     //   - out("rcx") _, out("r11") _
-    core::arch::asm!("syscall",
-                    inlateout("rax") id => ret,
-                    in("rdi") arg0, in("rsi") arg1, in("rdx") arg2,
-                    out("rcx") _, out("r11") _);
+    let mut ret: isize = 0;
+    unsafe {
+        core::arch::asm!("syscall",
+                        inlateout("rax") id => ret,
+                        in("rdi") arg0, 
+                        in("rsi") arg1, 
+                        in("rdx") arg2,
+                        out("rcx") _, 
+                        out("r11") _
+        ); 
+    }
+    ret
+
 }
 
 #[cfg(all(target_arch = "aarch64", target_os = "linux"))]
@@ -135,11 +144,14 @@ pub unsafe fn syscall3(id: usize, arg0: usize, arg1: usize, arg2: usize) -> isiz
     //   - in("x8") id
     //   - inlateout("x0") arg0 => ret
     //   - in("x1") arg1, in("x2") arg2
+    let mut ret: isize = 0;
     core::arch::asm!("svc #0",
                     in("x8") id,
                     inlateout("x0") arg0 => ret,
-                    in("x1") arg1, in("x2") arg2,
+                    in("x1") arg1, 
+                    in("x2") arg2,
                     );
+    ret
 }
 
 // Non-Linux platforms: provide a stub so the code compiles
@@ -181,7 +193,7 @@ const NATIVE_SYS_EXIT: usize = 0;
 pub fn sys_write(fd: usize, buf: &[u8]) -> isize {
     // TODO: Call syscall3 to implement write
     unsafe {
-        syscall3(NATIVE_SYS_WRITE, fd, buf.as_ptr() as usize, 0)
+        syscall3(NATIVE_SYS_WRITE, fd, buf.as_ptr() as usize, buf.len())
     }
 }
 
@@ -189,7 +201,7 @@ pub fn sys_write(fd: usize, buf: &[u8]) -> isize {
 pub fn sys_read(fd: usize, buf: &mut [u8]) -> isize {
     // TODO: Call syscall3 to implement read
     unsafe {
-        syscall3(NATIVE_SYS_READ, fd, buf.as_mut_ptr() as usize, 0)
+        syscall3(NATIVE_SYS_READ, fd, buf.as_mut_ptr() as usize, buf.len())
     }
 }
 
