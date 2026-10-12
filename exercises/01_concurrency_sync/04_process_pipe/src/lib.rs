@@ -231,8 +231,14 @@ pub fn pipe_through_grep(pattern: &str, input: &str) -> String {
 
     let mut reader = std::io::BufReader::new(stdout);
     let mut output = String::new();
-    while reader.read_line(&mut output).unwrap() != 0 {}
 
+    loop {
+        match std::io::BufRead::read_line(&mut reader, &mut output) {
+            Ok(0) => break,
+            Ok(_) => {},
+            Err(err) => panic!("读取失败 {err}"),
+        }
+    }
     writer.join().unwrap();
     output
 }

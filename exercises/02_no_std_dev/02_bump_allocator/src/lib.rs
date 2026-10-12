@@ -74,7 +74,17 @@ unsafe impl GlobalAlloc for BumpAllocator {
         // 5. Atomically update next to end using compare_exchange
         //    (if CAS fails, another thread raced — retry in a loop)
         // 6. Return the aligned address as a pointer
-        todo!()
+        let size = layout.size();
+        let align = layout.align();
+        let st = self.next.load(Ordering::SeqCst);
+        let st = (st + align - 1) &! (align - 1);
+        let end = st + size;
+        if end <= self.heap_end {
+            self.next.store(end, Ordering::SeqCst);
+            return st as *mut u8;
+        } else {
+            return null_mut();
+        }
     }
 
     unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {

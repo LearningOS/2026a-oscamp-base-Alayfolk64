@@ -38,6 +38,7 @@
 
 use core::alloc::{GlobalAlloc, Layout};
 use core::ptr::null_mut;
+use core::sync::atomic::Ordering;
 
 /// Free block header, stored at the beginning of each free memory block
 struct FreeBlock {
@@ -119,7 +120,25 @@ unsafe impl GlobalAlloc for FreeListAllocator {
         // TODO: Step 2 — no suitable block in free_list, allocate from bump region
         //
         // Same logic as 02_bump_allocator's alloc
-        todo!()
+        let mut prev_ptr = self.free_list_head();
+        let mut curr_ptr = self.free_list_head();
+        while !curr_ptr.is_null() {
+            if (*curr_ptr).size >= size {
+                (*prev_ptr).next = (*curr_ptr).next;
+                return curr_ptr as *mut u8;
+            } else {
+                prev_ptr = curr_ptr;
+                curr_ptr = (*curr_ptr).next;
+            }
+        }
+        let st = (self.bump_next.load(Ordering::SeqCst) + align - 1) &! (align - 1);
+        let end = st + size;
+        if end <= self.heap_end {
+            self.bump_next.store(end, Ordering::SeqCst);
+            return st as *mut u8;
+        } else {
+            return null_mut();
+        }
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
@@ -131,7 +150,14 @@ unsafe impl GlobalAlloc for FreeListAllocator {
         // 1. Cast ptr to *mut FreeBlock
         // 2. Write FreeBlock { size, next: current list head }
         // 3. Update free_list head to ptr
-        todo!()
+        let block = ptr as *mut FreeBlock;
+        unsafe {
+            block.write(FreeBlock {
+                size: size,
+                next: self.free_list_head(),
+            });
+        }
+        self.set_free_list_head(block);
     }
 }
 
